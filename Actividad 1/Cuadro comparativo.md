@@ -1,0 +1,27 @@
+# Actividad 1: Cuadro Comparativo RDBMS (SQL) vs. NoSQL (MongoDB)
+
+**Asignatura:** Teoría de Bases de Datos  
+**Estudiante:** Juan Manuel Gamez Nieto  
+**Guía:** No. 6 — Bases de Datos NoSQL: Introducción, Tipos y MongoDB Atlas
+
+---
+
+## 1. Tabla Comparativa en 8 Dimensiones
+
+| Dimensión                           | RDBMS / SQL (Relacional)                                                                                                                                                             | NoSQL / Documental (MongoDB)                                                                                                                                                                                                      |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Modelo de Datos**              | Tablas bidimensionales estructuradas compuestas por filas (tuplas) y columnas de tipo fijo.                                                                                          | Colecciones de documentos semiestructurados serializados en formato BSON (representación binaria de JSON).                                                                                                                        |
+| **2. Esquema (Schema)**             | **Estático y rígido:** La definición de tablas, columnas y tipos debe existir previamente (`DDL`). Cualquier alteración estructural (`ALTER TABLE`) suele ser costosa en producción. | **Dinámico y flexible (_schemaless_):** Los documentos pertenecientes a una misma colección pueden poseer campos distintos, estructuras heterogéneas o tipos polimórficos sin restricciones previas.                              |
+| **3. Escalabilidad**                | Predominantemente **Vertical (_Scale-up_):** Requiere incrementar hardware (CPU, memoria RAM, almacenamiento en disco) en una única máquina central.                                 | Nativa **Horizontal (_Scale-out_):** Diseñado para distribuir el almacenamiento y las consultas entre múltiples servidores mediante clústeres y particionamiento automático (_Sharding_).                                         |
+| **4. Relaciones y Datos Complejos** | Relaciones normalizadas modeladas mediante claves foráneas (`FOREIGN KEY`) combinadas en tiempo de consulta con `JOIN`.                                                              | Datos modelados de forma embebida usando estructuras anidadas (subdocumentos) y arreglos (`arrays`), o mediante referencias manuales (`DBRef` / `$lookup`), priorizando la localidad de datos.                                    |
+| **5. Transacciones y Consistencia** | Cumplimiento estricto del estándar **ACID** (Atomicidad, Consistencia, Aislamiento, Durabilidad). Prioriza la Consistencia Inmediata (`C` dentro del Teorema CAP).                   | Basado originalmente en el modelo **BASE** (Disponibilidad Básica, Estado Flexible, Consistencia Eventual). Favorece Disponibilidad y Tolerancia a Particiones (`AP`), con soporte ACID multi-documento a partir de MongoDB 4.0+. |
+| **6. Lenguaje de Consulta**         | Lenguaje declarativo estándar **SQL** estructurado (`SELECT`, `INSERT`, `UPDATE`, `DELETE`, `GROUP BY`, `HAVING`).                                                                   | API funcional basada en sintaxis JavaScript/JSON con métodos CRUD (`find()`, `insertOne()`, `updateOne()`, `deleteOne()`) y _Pipelines_ de Agregación (`aggregate()`).                                                            |
+| **7. Integridad y Restricciones**   | Forzada rigurosamente a nivel del motor mediante restricciones de clave (`PRIMARY KEY`, `UNIQUE`, `CHECK`, `NOT NULL`) y disparadores (`Triggers`).                                  | Delegada comúnmente a la capa de aplicación lógica del backend, aunque MongoDB permite reglas opcionales mediante validadores de esquema (`JSON Schema Validator`).                                                               |
+| **8. Casos de Uso Ideales**         | Sistemas bancarios, contabilidad financiera, sistemas ERP, nóminas y transacciones críticas donde la consistencia y la normalización son obligatorias.                               | Catálogos de comercio electrónico, telemetría IoT, registro de eventos/logs en tiempo real, redes sociales, gestión de contenidos (CMS) y microservicios con alta velocidad de iteración.                                         |
+
+---
+
+## 2. Análisis Crítico
+
+1. **Trade-offs de diseño:** Mientras que los sistemas relacionales previenen la redundancia de datos mediante la normalización de tablas, MongoDB favorece la desnormalización guardando la información relacionada dentro del mismo documento. Esto incrementa la velocidad de lectura al evitar múltiples combinaciones (`JOIN`), a cambio de exigir un mayor control de concurrencia en actualizaciones masivas.
+2. **Impacto en el desarrollo:** La naturaleza polimórfica de los documentos BSON en MongoDB permite modificar modelos de datos directamente en el código de la aplicación sin ejecutar migraciones complejas de base de datos, acelerando el ciclo de entrega continuo frente a las migraciones estrictas de esquemas relacionales.
